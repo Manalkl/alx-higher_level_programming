@@ -1,34 +1,43 @@
-#include "lists.h"
+#ifndef LISTS_H
+#define LISTS_H
+
+#include <stddef.h>
+
+/* function prototypes */
+size_t print_listint(const listint_t *h);
 
 /**
- * insert_node - Inserts a numb into a sorted singly-linked list.
- * @head: A ptr the head of the linked list.
- * @number: The numb to insert.
- *
- * Return: If the func fails - NULL.
- *         Otherwise - a ptr to the new node.
+ * insert_node - inserts node in sorted list
+ * @head: address of head pointer
+ * @number: number to insert
+ * Return: inserted node
  */
 listint_t *insert_node(listint_t **head, int number)
 {
-	listint_t *node = *head, *new;
+	listint_t *node = *head, *new = malloc(sizeof(listint_t));
 
-	new = malloc(sizeof(listint_t));
-	if (new == NULL)
+	if (!new)
 		return (NULL);
-	new->n = number;
 
-	if (node == NULL || node->n >= number)
+	new->n = number;
+	new->next = NULL;
+
+	if (!node || new->n < node->n)
 	{
 		new->next = node;
-		*head = new;
-		return (new);
+		return (*head = new);
 	}
 
-	while (node && node->next && node->next->n < number)
+	while (node)
+	{
+		if (!node->next || new->n < node->next->n)
+		{
+			new->next = node->next;
+			node->next = new;
+			return (node);
+		}
 		node = node->next;
-
-	new->next = node->next;
-	node->next = new;
-
-	return (new);
+	}
+	return (NULL);
 }
+#endif /* LISTS_H */
